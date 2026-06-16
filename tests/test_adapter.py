@@ -600,6 +600,7 @@ class TestTTS:
         mock_player = AsyncMock()
         mock_player.play_file = AsyncMock()
         mock_receiver = MagicMock()
+        mock_receiver.is_paused = False  # actively listening → should get paused
 
         adapter._voice_player = mock_player
         adapter._voice_receiver = mock_receiver

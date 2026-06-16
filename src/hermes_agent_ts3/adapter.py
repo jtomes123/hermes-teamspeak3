@@ -92,8 +92,8 @@ class TeamSpeakAdapter(BasePlatformAdapter):
         self._home_channel_id = await self._resolve_home_channel()
         await self._sq.client_move(self._my_client_id, self._home_channel_id)
 
-        self._start_voice_player()
-        self._start_voice_receiver()
+        await self._start_voice_player()
+        await self._start_voice_receiver()
 
         self._running = True
         self._event_task = asyncio.create_task(self._event_loop())
@@ -295,22 +295,50 @@ class TeamSpeakAdapter(BasePlatformAdapter):
 
         raise RuntimeError(f"Home channel '{name}' not found")
 
-    def _start_voice_player(self) -> None:
+    async def _start_voice_player(self) -> None:
         self._voice_player = TS3VoicePlayer(
             device_name="bot_tts_sink",
         )
-        self._voice_player.start()
-        logger.debug("Voice player started")
+        try:
+            await asyncio.to_thread(self._voice_player.start)
+        except Exception as exc:
+            self._list_audio_devices()
+            raise RuntimeError(
+                f"Failed to start voice player on 'bot_tts_sink': {exc}. "
+                "Is PulseAudio running and setup_audio.sh executed?"
+            ) from exc
+        logger.info("Voice player started on bot_tts_sink")
 
-    def _start_voice_receiver(self) -> None:
+    async def _start_voice_receiver(self) -> None:
+        device = f"{self._ts3_config.pulse_sink}.monitor"
         self._voice_receiver = TS3VoiceReceiver(
-            device_name=f"{self._ts3_config.pulse_sink}.monitor",
+            device_name=device,
             event_loop=asyncio.get_running_loop(),
         )
         self._voice_receiver.on_utterance(self._on_utterance)
-        self._voice_receiver.start()
+        try:
+            await asyncio.to_thread(self._voice_receiver.start)
+        except Exception as exc:
+            self._list_audio_devices()
+            raise RuntimeError(
+                f"Failed to start voice receiver on '{device}': {exc}. "
+                "Is PulseAudio running and setup_audio.sh executed?"
+            ) from exc
         self._voice_receiver.pause()
-        logger.debug("Voice receiver started (paused)")
+        logger.info("Voice receiver started on %s (paused)", device)
+
+    @staticmethod
+    def _list_audio_devices() -> None:
+        try:
+            import sounddevice as sd
+            devices = sd.query_devices()
+            logger.error("Available audio devices:")
+            for i, d in enumerate(devices):
+                logger.error("  [%d] %s (in=%d, out=%d, hostapi=%s)",
+                             i, d["name"], d["max_input_channels"],
+                             d["max_output_channels"], d.get("hostapi", "?"))
+        except Exception:
+            pass
 
     # -- Event loop --
 
@@ -575,7 +603,7 @@ class TeamSpeakAdapter(BasePlatformAdapter):
             return SendResult(success=False, message_id="")
 
         was_active = (self._voice_receiver is not None
-                     and self._voice_receiver.is_paused)
+                     and not self._voice_receiver.is_paused)
         if was_active:
             self._voice_receiver.pause()
 
