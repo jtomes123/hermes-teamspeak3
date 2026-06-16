@@ -1,0 +1,95 @@
+name: ts3-platform
+label: TeamSpeak 3
+kind: platform
+version: 0.1.0
+description: >
+  TeamSpeak 3 gateway adapter for Hermes Agent.
+  Connects a voice AI bot to TeamSpeak 3 servers using the official
+  TS3 client, PulseAudio virtual audio routing, and ServerQuery.
+author: ""
+requires_env:
+  - name: TS3_SERVER_HOST
+    description: "TeamSpeak 3 server hostname or IP"
+    prompt: "TS3 server address"
+    password: false
+  - name: TS3_SERVERQUERY_USER
+    description: "ServerQuery login username"
+    prompt: "ServerQuery username"
+    password: false
+  - name: TS3_SERVERQUERY_PASS
+    description: "ServerQuery login password"
+    prompt: "ServerQuery password"
+    password: true
+optional_env:
+  - name: TS3_NICKNAME
+    description: "Nickname the bot uses on the TS3 server (default: Hermes)"
+    prompt: "Bot nickname"
+    password: false
+  - name: TS3_SERVER_PASSWORD
+    description: "Password for the TS3 server"
+    prompt: "Server password"
+    password: true
+  - name: TS3_PULSE_SINK
+    description: "PulseAudio sink name for TS3 playback (default: ts3_playback)"
+    prompt: "PulseAudio playback sink"
+    password: false
+  - name: TS3_PULSE_SOURCE
+    description: "PulseAudio source name for bot TTS (default: bot_tts)"
+    prompt: "PulseAudio capture source"
+    password: false
+  - name: TS3_PULSE_SERVER
+    description: "PulseAudio server address (e.g. unix:/run/pulse/native)"
+    prompt: "PulseAudio server"
+    password: false
+  - name: TS3_CLIENT_DOWNLOAD_URL
+    description: "URL to download the TS3 client .run file"
+    prompt: "TS3 client download URL"
+    password: false
+  - name: TS3_CLIENT_DOWNLOAD_CHECKSUM
+    description: "SHA-256 checksum of the TS3 client .run file"
+    prompt: "TS3 client checksum"
+    password: false
+  - name: TS3_CLIENT_DATA_DIR
+    description: "Directory for TS3 client data files (default: ts3_client_data)"
+    prompt: "TS3 client data directory"
+    password: false
+  - name: TS3_XVFB_DISPLAY
+    description: "Xvfb display number for headless TS3 client (default: :99)"
+    prompt: "Xvfb display"
+    password: false
+  - name: TS3_RECONNECT_BASE
+    description: "Base reconnect delay in seconds (default: 1.0)"
+    prompt: "Reconnect base delay"
+    password: false
+  - name: TS3_RECONNECT_MAX
+    description: "Maximum reconnect delay in seconds (default: 60.0)"
+    prompt: "Reconnect max delay"
+    password: false
+  - name: TS3_ALLOW_ALL_USERS
+    description: "Allow any user to interact with the bot (dev only)"
+    prompt: "Allow all users? (true/false)"
+    password: false
+  - name: TS3_SERVERQUERY_PORT
+    description: "ServerQuery TCP port (default: 10011)"
+    prompt: "ServerQuery port"
+    password: false
+  - name: TS3_VOICE_PORT
+    description: "TS3 voice UDP port (default: 9987)"
+    prompt: "Voice port"
+    password: false
+  - name: TS3_HOME_CHANNEL
+    description: "Default channel the bot idles in"
+    prompt: "Home channel name"
+    password: false
+  - name: TS3_ALLOWED_USERS
+    description: "Comma-separated client nicknames or DB IDs allowed to interact"
+    prompt: "Allowed users (comma-separated)"
+    password: false
+  - name: TS3_ALLOWED_CHANNELS
+    description: "Comma-separated channel names/IDs the bot can join"
+    prompt: "Allowed channels (comma-separated)"
+    password: false
+  - name: TS3_IDENTITY_FILE
+    description: "Path to TS3 identity file (auto-generated if missing)"
+    prompt: "Identity file path"
+    password: false

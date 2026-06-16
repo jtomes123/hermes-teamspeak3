@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "hermes-agent-ts3"
+version = "0.1.0"
+description = "TeamSpeak 3 platform adapter for Hermes Agent — voice AI bot"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+readme = "README.md"
+dependencies = [
+    "hermes-agent>=0.15.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7",
+    "pytest-asyncio>=0.21",
+]
+
+[project.entry-points."hermes_agent.plugins"]
+ts3 = "hermes_agent_ts3:register"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+hermes_agent_ts3 = ["plugin.yaml"]

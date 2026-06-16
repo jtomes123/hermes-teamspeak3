@@ -1,0 +1,43 @@
+version: "3.8"
+
+services:
+  hermes:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: hermes-agent-ts3:latest
+    container_name: hermes-ts3
+    stdin_open: true
+    tty: true
+    environment:
+      - TS3_SERVER_HOST=${TS3_SERVER_HOST:-}
+      - TS3_SERVERQUERY_USER=${TS3_SERVERQUERY_USER:-serveradmin}
+      - TS3_SERVERQUERY_PASS=${TS3_SERVERQUERY_PASS:-}
+      - TS3_SERVERQUERY_PORT=${TS3_SERVERQUERY_PORT:-10011}
+      - TS3_VOICE_PORT=${TS3_VOICE_PORT:-9987}
+      - TS3_HOME_CHANNEL=${TS3_HOME_CHANNEL:-}
+      - TS3_ALLOWED_USERS=${TS3_ALLOWED_USERS:-}
+      - TS3_ALLOWED_CHANNELS=${TS3_ALLOWED_CHANNELS:-}
+      - TS3_IDENTITY_FILE=${TS3_IDENTITY_FILE:-ts3_identity}
+      - TS3_NICKNAME=${TS3_NICKNAME:-Hermes}
+    volumes:
+      - hermes_config:/home/hermes/.hermes
+      - hermes_data:/home/hermes/ts3_data
+    restart: unless-stopped
+
+  x11vnc:
+    image: theasp/x11vnc:latest
+    container_name: hermes-vnc
+    depends_on:
+      - hermes
+    network_mode: service:hermes
+    environment:
+      - DISPLAY=:99
+      - XVFB_SCREEN=1024x768x24
+    restart: "no"
+    profiles:
+      - vnc
+
+volumes:
+  hermes_config:
+  hermes_data:

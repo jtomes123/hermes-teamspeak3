@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TS3 artifacts
+ts3_identity*
+*.key
+settings.db
+
+# OS
+.DS_Store
+Thumbs.db
