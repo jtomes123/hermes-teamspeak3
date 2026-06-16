@@ -55,3 +55,18 @@ class BasePlatformAdapter(ABC):
 
     async def handle_message(self, event: MessageEvent) -> None:
         pass
+
+    async def send_voice(self, chat_id: str, audio_path: str, caption: str = "",
+                         reply_to: str | None = None, metadata: dict | None = None,
+                         **kwargs) -> SendResult:
+        return SendResult(success=True, message_id="")
+
+    async def play_tts(self, chat_id: str, audio_path: str, **kwargs) -> SendResult:
+        return SendResult(success=True, message_id="")
+
+    def build_source(self, chat_id: str, chat_name: str = "", chat_type: str = "",
+                     user_id: str = "", user_name: str = "") -> SessionSource:
+        return SessionSource(
+            platform=str(self.platform), chat_id=chat_id,
+            user_id=user_id, user_name=user_name,
+        )

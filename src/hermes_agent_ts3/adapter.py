@@ -567,12 +567,12 @@ class TeamSpeakAdapter(BasePlatformAdapter):
 
         await self.handle_message(msg_event)
 
-    # -- TTS --
+    # -- TTS / Voice Messages --
 
-    async def play_tts(self, chat_id: str, audio_path: str, **kwargs) -> None:
+    async def play_tts(self, chat_id: str, audio_path: str, **kwargs) -> SendResult:
         if self._voice_player is None:
             logger.error("Voice player not initialized")
-            return
+            return SendResult(success=False, message_id="")
 
         was_active = (self._voice_receiver is not None
                      and self._voice_receiver.is_paused)
@@ -581,9 +581,18 @@ class TeamSpeakAdapter(BasePlatformAdapter):
 
         try:
             await self._voice_player.play_file(audio_path)
+            return SendResult(success=True, message_id="tts")
+        except Exception as exc:
+            logger.error("TTS playback failed: %s", exc)
+            return SendResult(success=False, message_id="")
         finally:
             if was_active:
                 self._voice_receiver.resume()
+
+    async def send_voice(self, chat_id: str, audio_path: str, caption: str = "",
+                         reply_to: str | None = None, metadata: dict | None = None,
+                         **kwargs) -> SendResult:
+        return await self.play_tts(chat_id, audio_path, **kwargs)
 
     # -- Send / Receive --
 
